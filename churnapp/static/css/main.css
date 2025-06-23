@@ -1,0 +1,92 @@
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: #212529;
+}
+
+.navbar {
+  margin-bottom: 15px;
+}
+
+.navbar li {
+  position: relative;
+  text-decoration: none;
+}
+
+.navbar li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 100%;
+  height: 2px;
+  background-color: rgb(255, 255, 255);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.navbar li:hover::after {
+  transform: scaleX(1);
+}
+
+.navbar-brand {
+  font-size: 24px;
+}
+
+#navbarBar {
+  margin-left: 1rem;
+}
+
+#dashTitle {
+  margin-left: 20px;
+  margin-top: 20px;
+  color: #63646a;
+}
+
+.card {
+  background-color: #3a3f44;
+  color: #eaeaea;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: rgba(79, 80, 85, 0.3);
+}
+
+.card-title {
+  color: #b0b0b0;
+}
+
+#churncard {
+  background-color: #212529;
+  color: #eaeaea;
+  border: 0px;
+  border-radius: 5px;
+  border-color: rgba(79, 80, 85, 0.3);
+}
+
+#churntitle {
+  color: #b0b0b0;
+}
+
+#tableTitle {
+  margin-top: 50px;
+  color: #b0b0b0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  table-layout: auto;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}

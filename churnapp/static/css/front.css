@@ -1,0 +1,84 @@
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: #212529;
+}
+
+#front {
+  margin-top: 30px;
+}
+
+#descriptivFront {
+  margin-top: 20px;
+  font-size: larger;
+  margin-bottom: 30px;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-box {
+  display: flex;
+  flex-direction: column; /* Susun vertikal: icon di atas, teks di bawah */
+  align-items: center; /* Tengahkan horizontal */
+  justify-content: center; /* Tengahkan vertikal */
+  text-align: center;
+  background-color: #1c1c1c;
+  border: 2px dashed #333;
+  padding: 60px 40px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 700px; /* Atur lebar di sini */
+  height: 300px;
+  margin-top: 50px;
+}
+
+.upload-box:hover {
+  background-color: #222;
+}
+
+.upload-box input[type="file"] {
+  display: none;
+}
+
+.upload-icon {
+  font-size: 48px;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.upload-label {
+  color: #e0e0e0;
+  font-size: 1.1rem;
+}
+
+button {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #2e7dff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #1f5ed9;
+}
+
+.result-message {
+  margin-top: 30px;
+  color: #77ff77;
+  font-weight: bold;
+}

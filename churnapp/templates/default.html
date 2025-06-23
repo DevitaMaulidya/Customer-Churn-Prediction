@@ -1,0 +1,74 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<h2 id="dashTitle" class="mb-4">Default</h2>
+
+<div class="container">
+  <h5 style="color: #b0b0b0">Confussion Matrix</h5>
+  <img src="{% static 'img/cm_default.png' %}" class="img-fluid" alt="Churn Distribution" />
+</div>
+
+<div class="container">
+  <h5 style="margin-top: 50px; color: #b0b0b0">ROC and AUC</h5>
+  <img src="{% static 'img/roc_default.png' %}" class="img-fluid" alt="Churn Distribution" />
+</div>
+
+<div class="container">
+  <h5 style="margin-top: 50px; color: #b0b0b0">Evaluation Metrics</h5>
+  <div class="table-responsive">
+    <table class="table table-hover" data-bs-theme="dark">
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th class="text-center align-middle">Precision</th>
+          <th class="text-center align-middle">Recall</th>
+          <th class="text-center align-middle">F1-Score</th>
+          <th class="text-center align-middle">Support</th>
+          <th class="text-center align-middle">Accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in report %}
+        <tr>
+          <td>{{ row.label }}</td>
+          <td class="text-center align-middle">{{ row.precision }}</td>
+          <td class="text-center align-middle">{{ row.recall }}</td>
+          <td class="text-center align-middle">{{ row.f1_score }}</td>
+          <td class="text-center align-middle">{{ row.support }}</td>
+          {% if forloop.first %}
+          <td rowspan="{{ report|length }}" class="text-center align-middle">{{ accuracy }}%</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container">
+  <h5 style="margin-top: 50px; color: #b0b0b0">Predicted High-Risk Customers</h5>
+  <div class="table-responsive">
+    <table class="table table-hover" id="churnTable" data-bs-theme="dark">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Geography</th>
+          <th>Actual</th>
+          <th>Prediction</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data_selected %}
+        <tr>
+          <td>{{ row.Surname }}</td>
+          <td>{{ row.Gender }}</td>
+          <td>{{ row.Geography }}</td>
+          <td>{{ row.Actual }}</td>
+          <td>{{ row.Prediction }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock content %}

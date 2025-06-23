@@ -1,0 +1,94 @@
+<div class="container mt-5">
+    <h1 class="text-center fw-bold">Customer Curn Prediction</h1>
+  
+    <div class="card p-2 my-5 col-md-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <h3 class="m-0">Churn Rate</h3>
+        <h2 class="m-0 fw-bold">{{ churn_rate }}%</h2>
+      </div>
+    </div>
+  
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
+          <h5 class="mb-3">Confusion Matrix</h5>
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr>
+                <th></th>
+                <th colspan="2">Predicted</th>
+              </tr>
+              <tr>
+                <th>Actual</th>
+                <th>Not Churn</th>
+                <th>Churn</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Not Churn</th>
+                <td>{{ cmatrix.0.0 }}</td>
+                <td>{{ cmatrix.0.1 }}</td>
+              </tr>
+              <tr>
+                <th>Churn</th>
+                <td>{{ cmatrix.1.0 }}</td>
+                <td>{{ cmatrix.1.1 }}</td>
+              </tr>
+              <tr>
+                <th>Accuracy</th>
+                <td class="text-center fw-semibold" colspan="2">{{ accuracy }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+      <div class="row g-4 mb-4">
+        <div class="col-md-8">
+          <div class="card p-3 h-100">
+            <h5 class="mb-3">Classification Report</h5>
+            <table class="table table-bordered text-center">
+              <thead>
+                <tr>
+                  <th>Label</th>
+                  <th>Precision</th>
+                  <th>Recall</th>
+                  <th>F1-Score</th>
+                  <th>Support</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in report %}
+                <tr>
+                  <td>{{ row.label }}</td>
+                  <td>{{ row.precision }}</td>
+                  <td>{{ row.recall }}</td>
+                  <td>{{ row.f1_score }}</td>
+                  <td>{{ row.support }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card p-3" style="width: 750px">
+        <h5 class="mb-3">Churn Distribution</h5>
+        <img src="{% static 'img/churn_distribution.png' %}" width="700" height="700" alt="Churn Distribution" class="img-fluid" />
+      </div>
+      {% endblock %}
+    </div>
+  </div>
+
+
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if result %}
+  <p>{{ result }}</p>
+  {% endif %}

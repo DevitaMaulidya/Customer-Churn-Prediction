@@ -1,0 +1,555 @@
+def optimasi(request):
+    ### DATA TEST
+    data_path = os.path.join(settings.BASE_DIR, 'churnapp', 'data_test')
+    data = pd.read_csv(os.path.join(data_path))
+
+    #### MODEL
+    model_path = os.path.join(settings.BASE_DIR, 'churnapp', 'churn_model_optimasi.pkl')
+
+    # Simpan kolom yang ingin ditampilkan
+    display_data = data[['Surname', 'Exited']].copy()
+    display_data.rename(columns={'Exited': 'Actual'}, inplace=True)
+    
+    # Siapkan fitur untuk prediksi (drop kolom non-numerik dan label)
+    y_test = data['Exited']
+    X_test = data.drop(['Exited', 'Surname'], axis=1)
+    
+    def get_geography(row):
+        if row.get("Geography_France"):
+            return "France"
+        elif row.get("Geography_Germany"):
+            return "Germany"
+        elif row.get("Geography_Spain"):
+            return "Spain"
+        return "Unknown"
+    
+    data["Geography"] = data.apply(get_geography, axis=1)
+    display_data['Geography'] = data.apply(get_geography, axis=1)
+    
+    def get_gender(row):
+        if row.get("Gender_Female"):
+            return "Female"
+        elif row.get("Gender_Male"):
+            return "Male"
+        return "Unknown"
+    
+    data["Gender"] = data.apply(get_gender, axis=1)
+    display_data['Gender'] = data.apply(get_gender, axis=1)
+    
+    # Load model
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+        
+    # Predict
+    y_pred = model.predict(X_test)
+    
+    label_map = {0: 'No Churn', 1: 'Churn'}
+    display_data['Prediction'] = [label_map.get(pred, pred) for pred in y_pred]
+    display_data['Actual'] = [label_map.get(actual, actual) for actual in y_test]
+    
+    data_list = display_data.to_dict(orient='records')
+
+    # Confusion Matrix
+    cmatrix = confusion_matrix(y_test, y_pred)
+    accuracy = accuracy_score(y_test, y_pred)
+
+    # Buat classification report sebagai dictionary
+    report_dict = classification_report(y_test, y_pred, output_dict=True)
+
+    # Atur format biar lebih enak dipakai di template
+    report_items = []
+    for label, scores in report_dict.items():
+        if isinstance(scores, dict):
+            row = {
+                "label": label,
+                "precision": round(scores["precision"], 2),
+                "recall": round(scores["recall"], 2),
+                "f1_score": round(scores["f1-score"], 2),
+                "support": scores["support"],
+            }
+            report_items.append(row)
+    
+    return render(
+        request,
+        "optimasi.html",
+        {
+            "report": report_items,
+            "cmatrix": cmatrix.tolist(),
+            "accuracy": round(accuracy* 100),
+            'data_selected': data_list
+        },
+    )
+
+    def default(request):
+    ### DATA INPUT
+    media_folder = os.path.join(settings.BASE_DIR, 'media')
+    csv_files = [f for f in os.listdir(media_folder) if f.endswith('.csv')]
+    latest_file = max(csv_files, key=lambda x: os.path.getctime(os.path.join(media_folder, x)))
+    data = pd.read_csv(os.path.join(media_folder, latest_file))
+    
+    #### MODEL
+    model_path = os.path.join(settings.BASE_DIR, 'churnapp', 'churn_model_default.pkl')
+
+    # Simpan kolom yang ingin ditampilkan
+    display_data = data[['Surname']].copy()
+    
+    # Siapkan fitur untuk prediksi
+    X_test = data.drop(['CustomerId', 'Surname', 'Complain'], axis = 1)
+    
+    # Load model
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+        
+    def get_geography(row):
+        if row.get("Geography_France"):
+            return "France"
+        elif row.get("Geography_Germany"):
+            return "Germany"
+        elif row.get("Geography_Spain"):
+            return "Spain"
+        return "Unknown"
+    
+    data["Geography"] = data.apply(get_geography, axis=1)
+    display_data['Geography'] = data.apply(get_geography, axis=1)
+    
+    def get_gender(row):
+        if row.get("Gender_Female"):
+            return "Female"
+        elif row.get("Gender_Male"):
+            return "Male"
+        return "Unknown"
+    
+    data["Gender"] = data.apply(get_gender, axis=1)
+    display_data['Gender'] = data.apply(get_gender, axis=1)
+        
+    # Predict
+    y_pred = model.predict(X_test)
+    
+    label_map = {0: 'No Churn', 1: 'Churn'}
+    display_data['Prediction'] = [label_map.get(pred, pred) for pred in y_pred]
+    
+    return render(
+        request,
+        "dashboard.html",
+        {
+            'data_selected': display_data.to_dict(orient='records')
+        },
+    )
+
+    def optimasi(request):
+    ### DATA INPUT
+    media_folder = os.path.join(settings.BASE_DIR, 'media')
+    csv_files = [f for f in os.listdir(media_folder) if f.endswith('.csv')]
+    latest_file = max(csv_files, key=lambda x: os.path.getctime(os.path.join(media_folder, x)))
+    data = pd.read_csv(os.path.join(media_folder, latest_file))
+    
+    #### MODEL
+    model_path = os.path.join(settings.BASE_DIR, 'churnapp', 'churn_model_optimasi.pkl')
+
+    # Simpan kolom yang ingin ditampilkan
+    display_data = data[['Surname']].copy()
+    
+    X_test = data.drop(['CustomerId', 'Surname', 'Complain'], axis = 1)
+    
+    # Load model
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    
+    def get_geography(row):
+        if row.get("Geography_France"):
+            return "France"
+        elif row.get("Geography_Germany"):
+            return "Germany"
+        elif row.get("Geography_Spain"):
+            return "Spain"
+        return "Unknown"
+    
+    data["Geography"] = data.apply(get_geography, axis=1)
+    display_data['Geography'] = data.apply(get_geography, axis=1)
+    
+    def get_gender(row):
+        if row.get("Gender_Female"):
+            return "Female"
+        elif row.get("Gender_Male"):
+            return "Male"
+        return "Unknown"
+    
+    data["Gender"] = data.apply(get_gender, axis=1)
+    display_data['Gender'] = data.apply(get_gender, axis=1)
+        
+    # Predict
+    y_pred = model.predict(X_test)
+    
+    label_map = {0: 'No Churn', 1: 'Churn'}
+    display_data['Prediction'] = [label_map.get(pred, pred) for pred in y_pred]
+    
+    return render(
+        request,
+        "dashboard.html",
+        {
+            'data_selected1': display_data.to_dict(orient='records')
+        },
+    )
+
+    def generate_img(request):
+    ### DATA INPUT
+    media_folder = os.path.join(settings.BASE_DIR, 'media')
+    csv_files = [f for f in os.listdir(media_folder) if f.endswith('.csv')]
+    latest_file = max(csv_files, key=lambda x: os.path.getctime(os.path.join(media_folder, x)))
+    data = pd.read_csv(os.path.join(media_folder, latest_file))
+    
+    df = data.drop(['CustomerId', 'Surname'] ,axis=1)
+    
+    ### HEATMAP CORRELATION
+    df_numerical = df.select_dtypes(include=[np.number])
+    corr_matrix = df_numerical.corr().round(2)
+    plt.figure(figsize=(15, 10))
+    sns.heatmap(
+        corr_matrix,
+        annot=True,
+        cmap='coolwarm',
+        vmin=-1,
+        vmax=1,
+        cbar_kws={'label': 'Correlation'},
+        linecolor='#eaeaea'
+    )
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.xlabel('', fontsize=12, color='#eaeaea')
+    plt.ylabel('', fontsize=12, color='#eaeaea')
+    plt.xticks(fontsize=10, color='#eaeaea')
+    plt.yticks(fontsize=10, color='#eaeaea')
+    colorbar = plt.gca().collections[0].colorbar
+    colorbar.set_label('Correlation', color='#eaeaea', fontsize=14)
+    colorbar.ax.tick_params(labelcolor='#eaeaea')
+    save_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'heatmap_korelasi.png')
+    plt.savefig(save_path, bbox_inches='tight', transparent=True)
+    plt.close()
+    img_url = os.path.join('img', 'heatmap_korelasi.png')
+    
+    #Customers by Geography
+    plt.figure(figsize=(6, 4))
+    sns.set_theme()
+    sns.countplot(
+        x='Geography', 
+        hue='Geography', 
+        data=df, 
+        palette={'France': "#009fc3", 'Spain': "#009fc3", 'Germany': "#009fc3"},
+        edgecolor= 'none',
+        width=0.5
+        )
+    plt.gca().set_facecolor('none')
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.xticks(ticks=[0, 1, 2], labels=["France", "Spain", "Germany"], color='#eaeaea')
+    plt.yticks(color ='#eaeaea')
+    plt.xlabel("", color='#eaeaea')
+    plt.ylabel("", color='#eaeaea')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_geography.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url1 = os.path.join('img', 'cust_geography.png')
+    
+    # Hitung jumlah pelanggan per gender
+    gender_counts = df['Gender'].value_counts()
+    labels = gender_counts.index
+    sizes = gender_counts.values
+    colors = {'Female': '#009fc3', 'Male': '#45d6e0'}
+    fig, ax = plt.subplots()
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=labels,
+        colors=[colors[label] for label in labels],
+        startangle=90,
+        wedgeprops={'width': 0.4, 'edgecolor': 'none'},
+        textprops={'color': '#eaeaea', 'fontsize': 12},
+        autopct='%1.1f%%',
+        pctdistance=0.80    
+    )
+    fig.patch.set_facecolor('none')
+    for autotext in autotexts:
+        autotext.set_color('#003344')
+        autotext.set_fontsize(11)
+        autotext.set_fontweight('bold')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_gender.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url2 = os.path.join('img', 'cust_gender.png')
+    
+    # Num Of Product
+    plt.figure(figsize=(8, 6))
+    sns.countplot(
+        x='NumOfProducts', 
+        hue='NumOfProducts', 
+        data=df, 
+        palette="viridis",
+        edgecolor= 'none',
+        width=0.5)
+    plt.xlabel("")
+    plt.ylabel("")
+    plt.tick_params(axis='x', colors='#eaeaea')
+    plt.tick_params(axis='y', colors='#eaeaea')
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.gca().set_facecolor('none')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_numPro.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url3 = os.path.join('img', 'cust_numPro.png')
+    
+    ### Age
+    plt.figure(figsize=(8, 6))
+    sns.histplot(df['Age'], bins=10, kde=True, color='skyblue')
+    plt.xlabel("")
+    plt.ylabel("")
+    plt.tick_params(axis='x', colors='#eaeaea')
+    plt.tick_params(axis='y', colors='#eaeaea')
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.gca().set_facecolor('none')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_age.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url4 = os.path.join('img', 'cust_age.png')
+    
+    ### CREDIT CARD
+    Credit_counts = df['HasCrCard'].value_counts()
+    labels = ['No', 'Yes'] 
+    sizes = Credit_counts.values
+    colors = {0: '#009fc3', 1: '#45d6e0'}
+    fig, ax = plt.subplots()
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=labels,
+        colors=[colors[label] for label in Credit_counts.index],
+        startangle=90,
+        wedgeprops={'width': 0.4, 'edgecolor': 'none'},
+        textprops={'color': '#eaeaea', 'fontsize': 12},
+        autopct='%1.1f%%',
+        pctdistance=0.80    
+    )
+    fig.patch.set_facecolor('none')
+    for autotext in autotexts:
+        autotext.set_color('#003344')
+        autotext.set_fontsize(11)
+        autotext.set_fontweight('bold')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_credit.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url5 = os.path.join('img', 'cust_credit.png')
+    
+    ### TENURE
+    plt.figure(figsize=(8, 5))
+    plt.hist(df['Tenure'], bins=range(0, 11), color='#45d6e0', edgecolor='white')
+    plt.title('Distribusi Tenure', color='#eaeaea')
+    plt.xlabel('Tahun Menjadi Nasabah', color='#eaeaea')
+    plt.ylabel('Jumlah Nasabah', color='#eaeaea')
+    plt.xticks(color='#eaeaea')
+    plt.yticks(color='#eaeaea')
+    plt.grid(False)
+    plt.gca().spines[:].set_visible(False)
+    plt.gcf().patch.set_facecolor('none')
+    save_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'tenure_dist.png')
+    plt.savefig(save_path, bbox_inches='tight')
+    plt.close()
+    img_url6 = os.path.join('img', 'tenure_dist.png')
+    
+    plt.figure(figsize=(8, 5))
+    plt.hist(df['Balance'], bins=30, color='#009fc3', edgecolor='white')
+    plt.title('Distribusi Saldo Nasabah', color='#eaeaea')
+    plt.xlabel('Saldo', color='#eaeaea')
+    plt.ylabel('Jumlah Nasabah', color='#eaeaea')
+    plt.xticks(color='#eaeaea')
+    plt.yticks(color='#eaeaea')
+    plt.grid(False)
+    plt.gca().spines[:].set_visible(False)
+    plt.gcf().patch.set_facecolor('none')
+    save_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'balance_dist.png')
+    plt.savefig(save_path, bbox_inches='tight')
+    plt.close()
+    img_url7 = os.path.join('img', 'balance_dist.png')
+    
+    return render(
+        request,
+        "dashboard.html",
+        {
+            'heatmap_path': img_url,
+            'geography': img_url1,
+            'gender': img_url2,
+            'numPro': img_url3,
+            'age': img_url4,
+            'credit': img_url5,
+            'tenure': img_url6,
+            'balance': img_url7,
+        },
+    )
+
+    ### HEATMAP CORRELATION
+    df_numerical = data.select_dtypes(include=[np.number])
+    corr_matrix = df_numerical.corr().round(2)
+    plt.figure(figsize=(15, 10))
+    sns.heatmap(
+        corr_matrix,
+        annot=True,
+        cmap='coolwarm',
+        vmin=-1,
+        vmax=1,
+        cbar_kws={'label': 'Correlation'},
+        linecolor='#eaeaea'
+    )
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.xlabel('', fontsize=12, color='#eaeaea')
+    plt.ylabel('', fontsize=12, color='#eaeaea')
+    plt.xticks(fontsize=10, color='#eaeaea')
+    plt.yticks(fontsize=10, color='#eaeaea')
+    colorbar = plt.gca().collections[0].colorbar
+    colorbar.set_label('Correlation', color='#eaeaea', fontsize=14)
+    colorbar.ax.tick_params(labelcolor='#eaeaea')
+    save_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'heatmap_korelasi.png')
+    plt.savefig(save_path, bbox_inches='tight', transparent=True)
+    plt.close()
+    img_url = os.path.join('img', 'heatmap_korelasi.png')
+    
+    #Customers by Geography
+    plt.figure(figsize=(6, 4))
+    sns.set_theme()
+    sns.countplot(
+        x='Geography', 
+        hue='Geography', 
+        data=data, 
+        palette={'France': "#009fc3", 'Spain': "#009fc3", 'Germany': "#009fc3", 'Unknown': "#cccccc"},
+        edgecolor= 'none',
+        width=0.5
+    )
+    plt.gca().set_facecolor('none')
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.xticks(ticks=[0, 1, 2], labels=["France", "Spain", "Germany"], color='#eaeaea')
+    plt.yticks(color ='#eaeaea')
+    plt.xlabel("", color='#eaeaea')
+    plt.ylabel("", color='#eaeaea')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_geography.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url1 = os.path.join('img', 'cust_geography.png')
+    
+    # Hitung jumlah pelanggan per gender
+    gender_counts = data['Gender'].value_counts()
+    labels = gender_counts.index
+    sizes = gender_counts.values
+    colors = {'Female': '#009fc3', 'Male': '#45d6e0', 'Unknown': "#cccccc"}
+    
+    fig, ax = plt.subplots()
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=labels,
+        colors=[colors[label] for label in labels],
+        startangle=90,
+        wedgeprops={'width': 0.4, 'edgecolor': 'none'},
+        textprops={'color': '#eaeaea', 'fontsize': 12},
+        autopct='%1.1f%%',
+        pctdistance=0.80    
+    )
+    fig.patch.set_facecolor('none')
+    for autotext in autotexts:
+        autotext.set_color('#003344')
+        autotext.set_fontsize(11)
+        autotext.set_fontweight('bold')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_gender.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url2 = os.path.join('img', 'cust_gender.png')
+    
+    # Num Of Product
+    plt.figure(figsize=(8, 6))
+    sns.countplot(
+        x='NumOfProducts', 
+        hue='NumOfProducts', 
+        data=data, 
+        palette="viridis",
+        edgecolor= 'none',
+        width=0.5)
+    plt.xlabel("")
+    plt.ylabel("")
+    plt.tick_params(axis='x', colors='#eaeaea')
+    plt.tick_params(axis='y', colors='#eaeaea')
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.gca().set_facecolor('none')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_numPro.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url3 = os.path.join('img', 'cust_numPro.png')
+    
+    ### Age
+    plt.figure(figsize=(8, 6))
+    sns.histplot(data['Age'], bins=10, kde=True, color='skyblue')
+    plt.xlabel("")
+    plt.ylabel("")
+    plt.tick_params(axis='x', colors='#eaeaea')
+    plt.tick_params(axis='y', colors='#eaeaea')
+    fig = plt.gcf()
+    fig.patch.set_facecolor('none')
+    plt.gca().set_facecolor('none')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_age.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url4 = os.path.join('img', 'cust_age.png')
+    
+    ### CREDIT CARD
+    Credit_counts = data['HasCrCard'].value_counts()
+    labels = ['No', 'Yes'] 
+    sizes = Credit_counts.values
+    colors = {0: '#009fc3', 1: '#45d6e0'}
+    fig, ax = plt.subplots()
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=labels,
+        colors=[colors[label] for label in Credit_counts.index],
+        startangle=90,
+        wedgeprops={'width': 0.4, 'edgecolor': 'none'},
+        textprops={'color': '#eaeaea', 'fontsize': 12},
+        autopct='%1.1f%%',
+        pctdistance=0.80    
+    )
+    fig.patch.set_facecolor('none')
+    for autotext in autotexts:
+        autotext.set_color('#003344')
+        autotext.set_fontsize(11)
+        autotext.set_fontweight('bold')
+    geo_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'cust_credit.png')
+    plt.savefig(geo_path, bbox_inches='tight')
+    plt.close()
+    img_url5 = os.path.join('img', 'cust_credit.png')
+    
+    ### TENURE
+    plt.figure(figsize=(8, 5))
+    plt.hist(data['Tenure'], bins=range(0, 11), color='#45d6e0', edgecolor='white')
+    plt.title('Distribusi Tenure', color='#eaeaea')
+    plt.xlabel('Tahun Menjadi Nasabah', color='#eaeaea')
+    plt.ylabel('Jumlah Nasabah', color='#eaeaea')
+    plt.xticks(color='#eaeaea')
+    plt.yticks(color='#eaeaea')
+    plt.grid(False)
+    plt.gca().spines[:].set_visible(False)
+    plt.gcf().patch.set_facecolor('none')
+    save_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'tenure_dist.png')
+    plt.savefig(save_path, bbox_inches='tight')
+    plt.close()
+    img_url6 = os.path.join('img', 'tenure_dist.png')
+    
+    plt.figure(figsize=(8, 5))
+    plt.hist(data['Balance'], bins=30, color='#009fc3', edgecolor='white')
+    plt.title('Distribusi Saldo Nasabah', color='#eaeaea')
+    plt.xlabel('Saldo', color='#eaeaea')
+    plt.ylabel('Jumlah Nasabah', color='#eaeaea')
+    plt.xticks(color='#eaeaea')
+    plt.yticks(color='#eaeaea')
+    plt.grid(False)
+    plt.gca().spines[:].set_visible(False)
+    plt.gcf().patch.set_facecolor('none')
+    save_path = os.path.join(BASE_DIR, 'cust_churn', 'churnapp', 'static', 'img', 'balance_dist.png')
+    plt.savefig(save_path, bbox_inches='tight')
+    plt.close()
+    img_url7 = os.path.join('img', 'balance_dist.png')

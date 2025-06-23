@@ -1,0 +1,20 @@
+.navbar {
+  padding-top: 30px;
+  transition: all 0.3s ease; /* Efek transisi saat scroll */
+}
+
+/* Shrink effect saat di-scroll */
+.navbar.shrink {
+  padding: 5px 0; /* Menjaga jarak dan mengecilkan navbar */
+  background-color: rgba(255, 255, 255, 0.9); /* Menambahkan efek transparan saat scroll */
+}
+
+/* Style untuk navbar link */
+.navbar a {
+  transition: all 0.3s ease;
+}
+
+/* Shrink ketika scroll */
+.navbar.shrink a {
+  font-size: 14px; /* Mengurangi ukuran font saat navbar mengecil */
+}

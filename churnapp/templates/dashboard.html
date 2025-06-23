@@ -1,0 +1,214 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<h2 id="dashTitle" class="mb-4">Analisa Data <strong>{{ filename }}</strong></h2>
+
+<div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Total Customers</p>
+        <h4 class="card-text">{{ dataCount }}</h4>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Churn Rate</p>
+        <h4 class="card-text">{{ churn_rate }}%</h4>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Avg Credit Score</p>
+        <h4 class="card-text">{{ avg_credit_score }}</h4>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Avg Balance</p>
+        <h4 class="card-text">${{ avg_balance }}</h4>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+  <div class="col d-flex">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="card-title">Customer by Geography</p>
+        <img src="{% static 'img/cust_Geography.png' %}" class="img-fluid" alt="Customer Geography" />
+      </div>
+    </div>
+  </div>
+  <div class="col d-flex">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="card-title">Gender Distribution</p>
+        <img src="{% static 'img/cust_Gender.png' %}" class="img-fluid" alt="Gender Distribution" />
+      </div>
+    </div>
+  </div>
+  <div class="col d-flex">
+    <div class="card h-100">
+      <div class="card-body">
+        <p class="card-title">Number of Products</p>
+        <img src="{% static 'img/cust_numPro.png' %}" class="img-fluid" alt="Number of Products" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Age Distribution</p>
+        <img src="{% static 'img/cust_age.png' %}" class="img-fluid" alt="Age Distribution" />
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Distribution of Credit Score</p>
+        <img src="{% static 'img/CreditScore.png' %}" class="img-fluid" alt="Churn by Tenure" />
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Credit Card Ownership</p>
+        <img src="{% static 'img/cust_credit.png' %}" class="img-fluid" alt="Credit Card Ownership" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Balance</p>
+        <img src="{% static 'img/Balance.png' %}" class="img-fluid" alt="Churn Distribution" />
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Heatmap</p>
+        <img src="{% static 'img/heatmap_korelasi.png' %}" class="img-fluid" alt="Heatmap" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <h5 style="margin-top: 50px; color: #b0b0b0">Customer Data</h5>
+  <div class="table-responsive">
+    <table class="table table-hover" id="churnTable" data-bs-theme="dark">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Surname</th>
+          <th>Credit Score</th>
+          <th>Geography</th>
+          <th>Gender</th>
+          <th>Age</th>
+          <th>Tenure</th>
+          <th>Balance</th>
+          <th>Product</th>
+          <th>Credit Card</th>
+          <th>Member</th>
+          <th>Estimated Salary</th>
+          <th>Complain</th>
+          <th>Satisfaction Score</th>
+          <th>Card Type</th>
+          <th>Point Earned</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row.CustomerId }}</td>
+          <td>{{ row.Surname }}</td>
+          <td>{{ row.CreditScore }}</td>
+          <td>{{ row.Geography }}</td>
+          <td>{{ row.Gender }}</td>
+          <td>{{ row.Age }}</td>
+          <td>{{ row.Tenure }}</td>
+          <td>{{ row.Balance }}</td>
+          <td>{{ row.NumOfProduct }}</td>
+          <td>{{ row.HasCrCard }}</td>
+          <td>{{ row.IsActiveMember }}</td>
+          <td>{{ row.EstimatedSalary }}</td>
+          <td>{{ row.Complain }}</td>
+          <td>{{ row.SatisfactionScore }}</td>
+          <td>{{ row.CardType }}</td>
+          <td>{{ row.PointEarned }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container">
+  <h5 style="margin-top: 50px; color: #b0b0b0">Prediction Without Optimation</h5>
+  <div class="table-responsive">
+    <table class="table table-hover" id="churnTable1" data-bs-theme="dark">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Geography</th>
+          <th>Prediction</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data_selected %}
+        <tr>
+          <td>{{ row.Surname }}</td>
+          <td>{{ row.Gender }}</td>
+          <td>{{ row.Geography }}</td>
+          <td>{{ row.Prediction }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container">
+  <h5 style="margin-top: 50px; color: #b0b0b0">Prediction With Optimation</h5>
+  <div class="table-responsive">
+    <table class="table table-hover" id="churnTable2" data-bs-theme="dark">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Geography</th>
+          <th>Prediction</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data_selected1 %}
+        <tr>
+          <td>{{ row.Surname }}</td>
+          <td>{{ row.Gender }}</td>
+          <td>{{ row.Geography }}</td>
+          <td>{{ row.Prediction }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock content %}

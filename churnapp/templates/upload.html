@@ -1,0 +1,96 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Data</title>
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" />
+    <link href="{% static 'vendor/DataTables/datatables.min.css' %}" rel="stylesheet" />
+
+    <!-- Main CSS File -->
+    <link href="{% static 'css/front.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <h1 class="text-center" id="front">Prediction Customer Churn</h1>
+
+    <p class="text-center" id="descriptivFront">
+      Upload a file to predict customer churn. <br />
+      The file should be in CSV format and follow the specified format
+    </p>
+
+    <div class="container" id="table3">
+      <div class="table-responsive">
+        <table class="table table-hover" id="churnTable3" data-bs-theme="dark">
+          <thead>
+            <tr>
+              <th>Customer ID</th>
+              <th>Surname</th>
+              <th>Credit Score</th>
+              <th>Geography</th>
+              <th>Gender</th>
+              <th>Age</th>
+              <th>Tenure</th>
+              <th>Balance</th>
+              <th>Product</th>
+              <th>Credit Card</th>
+              <th>Member</th>
+              <th>Estimated Salary</th>
+              <th>Complain</th>
+              <th>Satisfaction Score</th>
+              <th>Card Type</th>
+              <th>Point Earned</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in data %}
+            <tr>
+              <td>{{ row.CustomerId }}</td>
+              <td>{{ row.Surname }}</td>
+              <td>{{ row.CreditScore }}</td>
+              <td>{{ row.Geography }}</td>
+              <td>{{ row.Gender }}</td>
+              <td>{{ row.Age }}</td>
+              <td>{{ row.Tenure }}</td>
+              <td>{{ row.Balance }}</td>
+              <td>{{ row.NumOfProduct }}</td>
+              <td>{{ row.HasCrCard }}</td>
+              <td>{{ row.IsActiveMember }}</td>
+              <td>{{ row.EstimatedSalary }}</td>
+              <td>{{ row.Complain }}</td>
+              <td>{{ row.SatisfactionScore }}</td>
+              <td>{{ row.CardType }}</td>
+              <td>{{ row.PointEarned }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <form class="upload-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label class="upload-box">
+        <div class="upload-icon"><i class="bi bi-cloud-upload"></i></div>
+        {{ form.as_p }}
+      </label>
+      <button type="submit">Upload</button>
+    </form>
+
+    {% if result %}
+    <p class="result-message">{{ result }}</p>
+    {% endif %}
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/DataTables/datatables.min.js' %}"></script>
+
+    <!-- Main JS Files -->
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>
