@@ -8,10 +8,3 @@ myenv/
 # Environment variables
 .env
 .env.*
-
-# Jupyter Notebook
-*.ipynb
-
-# Ignore folders
-data/
-media/
